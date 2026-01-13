@@ -1,0 +1,14 @@
+apiVersion: 1
+
+datasources:
+  - name: PostgreSQL_MiniNetflix
+    type: postgres
+    access: proxy
+    url: postgres:5432
+    database: netflix_dw
+    user: netflix
+    secureJsonData:
+      password: netflix
+    isDefault: true
+    jsonData:
+      sslmode: disable

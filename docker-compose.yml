@@ -1,0 +1,47 @@
+version: "3.8"
+
+services:
+
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_USER: netflix
+      POSTGRES_PASSWORD: netflix
+      POSTGRES_DB: netflix_dw
+    ports:
+      - "5432:5432"
+
+  grafana:
+    image: grafana/grafana:10.4.2
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+
+  spark-master:
+    image: bde2020/spark-master:3.3.0-hadoop3.3
+    container_name: spark-master
+    ports:
+      - "8080:8080"
+      - "7077:7077"
+    volumes:
+      - ./spark-apps:/spark-apps
+      - ./data:/data
+
+  spark-worker:
+    image: bde2020/spark-worker:3.3.0-hadoop3.3
+    container_name: spark-worker
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_MASTER=spark://spark-master:7077
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./spark-apps:/spark-apps
+      - ./data:/data

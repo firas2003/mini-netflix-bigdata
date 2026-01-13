@@ -1,0 +1,66 @@
+{
+  "id": null,
+  "uid": "mini-netflix-dashboard",
+  "title": "Mini Netflix – Recommandation System",
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "version": 1,
+  "refresh": "10s",
+  "panels": [
+    {
+      "id": 1,
+      "type": "table",
+      "title": "🎬 Top 10 Films par Note Moyenne",
+      "datasource": {
+        "type": "postgres",
+        "uid": "P785B230B1E3D0F4F"
+      },
+      "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
+      "targets": [
+        {
+          "format": "table",
+          "rawSql": "SELECT title AS \"Film\", ROUND(avg_rating,2) AS \"Note Moyenne\", rating_count AS \"Nombre de votes\" FROM top_movies ORDER BY avg_rating DESC LIMIT 10;",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "barchart",
+      "title": "⭐ Notes Moyennes (Top Films)",
+      "datasource": {
+        "type": "postgres",
+        "uid": "P785B230B1E3D0F4F"
+      },
+      "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 },
+      "targets": [
+        {
+          "format": "table",
+          "rawSql": "SELECT title, avg_rating FROM top_movies ORDER BY avg_rating DESC LIMIT 10;",
+          "refId": "B"
+        }
+      ],
+      "options": {
+        "xField": "title",
+        "yField": "avg_rating"
+      }
+    },
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "📊 Distribution des Notes",
+      "datasource": {
+        "type": "postgres",
+        "uid": "P785B230B1E3D0F4F"
+      },
+      "gridPos": { "x": 0, "y": 8, "w": 24, "h": 8 },
+      "targets": [
+        {
+          "format": "time_series",
+          "rawSql": "SELECT rating AS time, COUNT(*) AS value FROM ratings_clean GROUP BY rating ORDER BY rating;",
+          "refId": "C"
+        }
+      ]
+    }
+  ]
+}
